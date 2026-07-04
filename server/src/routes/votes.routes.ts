@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import type { ApiResponse, Idea } from '@feedback-board/shared';
 import { castVote, DuplicateVoteError, SelfVoteError } from '../repositories/ideas.repository';
+import { requireAuth } from '../middleware/requireAuth';
 
 export const votesRouter = Router();
 
-// TODO: apply Dev A's requireAuth middleware here once available:
-// votesRouter.use(requireAuth)
+votesRouter.use(requireAuth);
 
 votesRouter.post('/:id/vote', async (req, res, next) => {
   try {
-    const idea = await castVote(req.params.id, req.userId);
+    const idea = await castVote(req.params.id, req.user!.id);
     if (!idea) {
       res.status(404).json({ error: 'Idea not found.' } satisfies ApiResponse<never>);
       return;

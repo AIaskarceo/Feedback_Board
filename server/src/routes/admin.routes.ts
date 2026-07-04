@@ -3,11 +3,12 @@ import type { ApiResponse, Idea } from '@feedback-board/shared';
 import { markIdeaDone } from '../repositories/ideas.repository';
 import { getUserById } from '../repositories/users.repository';
 import { sendIdeaDoneEmail } from '../services/email';
+import { requireAuth } from '../middleware/requireAuth';
+import { requireAdmin } from '../middleware/requireAdmin';
 
 export const adminRouter = Router();
 
-// TODO: apply Dev A's requireAdmin middleware here once available:
-// adminRouter.use(requireAdmin)
+adminRouter.use(requireAuth, requireAdmin);
 
 adminRouter.post('/:id/done', async (req, res, next) => {
   try {

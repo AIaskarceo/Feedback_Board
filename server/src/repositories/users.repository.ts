@@ -1,5 +1,5 @@
 import type { User } from '@feedback-board/shared';
-import { pool } from '../db/pool';
+import { pool } from '../db/client';
 
 interface UserRow {
   id: string;
