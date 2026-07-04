@@ -1,8 +1,10 @@
 {
   "name": "feedback-board",
   "private": true,
+  "version": "0.1.0",
   "workspaces": [
-    "packages/*",
-    "server"
+    "packages/shared",
+    "server",
+    "web"
   ]
 }
