@@ -11,10 +11,16 @@ function getResendClient(): Resend {
 }
 
 export async function sendIdeaDoneEmail(idea: Idea, submitter: User): Promise<void> {
-  await getResendClient().emails.send({
+  const { error } = await getResendClient().emails.send({
     from: FROM_EMAIL,
     to: submitter.email,
     subject: 'Your idea was marked as Done! 🎉',
     text: `Hi ${submitter.name},\n\nYour idea has been marked as done:\n\n"${idea.text}"\n\nThanks for contributing!`,
   });
+
+  // The Resend SDK resolves (doesn't reject) on API errors, so without this
+  // check a failed send looks identical to a successful one to the caller.
+  if (error) {
+    throw new Error(`Resend API error: ${error.message}`);
+  }
 }
