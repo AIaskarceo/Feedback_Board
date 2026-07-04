@@ -26,6 +26,7 @@ Environment variables (see [`server/.env.example`](server/.env.example)):
 | `RESEND_API_KEY`           | from your Resend dashboard                          |
 | `EMAIL_FROM`               | e.g. `Feedback Board <onboarding@resend.dev>`       |
 | `APP_ORIGIN`               | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}`            |
+| `ADMIN_EMAILS`             | comma-separated emails to auto-promote to admin on first sign-in |
 
 `PORT` is injected by Railway automatically; `server/src/server.ts` already
 reads it.
