@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import type { Idea } from '@feedback-board/shared';
 import { useApiClient } from '../lib/apiClient';
-import { useIsAdmin } from '../lib/useIsAdmin';
+import { useIsAdmin } from '../lib/CurrentUserContext';
 import IdeaCard from '../components/IdeaCard';
 import AddIdeaModal from '../components/AddIdeaModal';
 import ToastList, { useToasts } from '../components/Toast';

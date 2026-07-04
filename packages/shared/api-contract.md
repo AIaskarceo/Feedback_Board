@@ -46,6 +46,18 @@ any endpoint below returns `401` with `error: "Unauthorized."`.
   - Idea does not exist (404) → `"Idea not found."`
   - Caller is not an admin (403) → `"Only admins can perform this action."`
 
+## `GET /api/me`
+
+- **Auth:** any authenticated user
+- **Request body:** none
+- **Response:** `ApiResponse<User>` — the current user, including `role`
+- **Errors:** none beyond the global 401
+
+_Added after Phase 0 so the frontend can derive admin status from the
+database `role` (source of truth) instead of Clerk `publicMetadata`, which
+nothing keeps in sync. Additive and backward-compatible — no existing
+endpoint's shape changed._
+
 ## `GET /api/health`
 
 - **Auth:** none

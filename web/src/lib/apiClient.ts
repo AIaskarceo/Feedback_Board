@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useAuth } from '@clerk/clerk-react';
-import type { ApiResponse, Idea } from '@feedback-board/shared';
+import type { ApiResponse, Idea, User } from '@feedback-board/shared';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
@@ -33,6 +33,8 @@ async function request<T>(
 // packages/shared/api-contract.md exactly — do not call fetch elsewhere.
 function createApiClient(getToken: TokenGetter) {
   return {
+    getMe: () => request<User>(getToken, '/api/me'),
+
     getIdeas: () => request<Idea[]>(getToken, '/api/ideas'),
 
     createIdea: (text: string) =>

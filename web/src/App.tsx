@@ -4,11 +4,14 @@ import { SignedIn, SignedOut } from '@clerk/clerk-react';
 import SignIn from './pages/SignIn';
 import Board from './pages/Board';
 import Admin from './pages/Admin';
-import { useIsAdmin } from './lib/useIsAdmin';
+import { useCurrentUser } from './lib/CurrentUserContext';
 
 function RequireAdmin({ children }: { children: ReactElement }) {
-  const isAdmin = useIsAdmin();
-  return isAdmin ? children : <Navigate to="/" replace />;
+  const { user, isLoading } = useCurrentUser();
+  if (isLoading) {
+    return null;
+  }
+  return user?.role === 'admin' ? children : <Navigate to="/" replace />;
 }
 
 function Protected({ children }: { children: ReactElement }) {
