@@ -1,0 +1,8 @@
+{
+  "name": "feedback-board",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "server"
+  ]
+}
