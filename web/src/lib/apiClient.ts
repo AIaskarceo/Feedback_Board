@@ -22,6 +22,10 @@ async function request<T>(
     },
   });
 
+  if (response.status === 401 && window.location.pathname !== '/sign-in') {
+    window.location.assign('/sign-in');
+  }
+
   return (await response.json()) as ApiResponse<T>;
 }
 
