@@ -6,5 +6,8 @@
     "packages/shared",
     "server",
     "web"
-  ]
+  ],
+  "scripts": {
+    "verify": "npm run migrate --workspace=server && npm run test --workspace=server"
+  }
 }
