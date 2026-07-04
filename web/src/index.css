@@ -101,6 +101,24 @@ body {
   gap: 12px;
 }
 
+.pill-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+}
+
+.tab--active {
+  background: var(--color-indigo);
+  border-color: var(--color-indigo);
+  color: #fff;
+}
+
 .idea-card {
   display: flex;
   align-items: center;

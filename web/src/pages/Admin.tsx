@@ -1,22 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useClerk, useUser } from '@clerk/clerk-react';
 import type { Idea } from '@feedback-board/shared';
 import { useApiClient } from '../lib/apiClient';
-import { useIsAdmin } from '../lib/useIsAdmin';
 import IdeaCard from '../components/IdeaCard';
-import AddIdeaModal from '../components/AddIdeaModal';
 import ToastList, { useToasts } from '../components/Toast';
 
-export default function Board() {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+type Filter = 'open' | 'done' | 'all';
+
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: 'open', label: 'Open' },
+  { key: 'done', label: 'Done' },
+  { key: 'all', label: 'All' },
+];
+
+export default function Admin() {
   const apiClient = useApiClient();
   const { toasts, pushToast } = useToasts();
-  const isAdmin = useIsAdmin();
 
   const [ideas, setIdeas] = useState<Idea[] | null>(null);
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [filter, setFilter] = useState<Filter>('open');
 
   const loadIdeas = useCallback(async () => {
     const response = await apiClient.getIdeas();
@@ -29,11 +31,6 @@ export default function Board() {
     loadIdeas();
   }, [loadIdeas]);
 
-  const handleCreated = (idea: Idea) => {
-    setIdeas((current) => (current ? [idea, ...current] : [idea]));
-    pushToast('Idea posted');
-  };
-
   const handleVoted = (updated: Idea) => {
     setIdeas((current) => current?.map((idea) => (idea.id === updated.id ? updated : idea)) ?? current);
   };
@@ -43,27 +40,33 @@ export default function Board() {
     pushToast('Marked as done — submitter notified');
   };
 
+  const visibleIdeas = useMemo(
+    () => (ideas ? ideas.filter((idea) => filter === 'all' || idea.status === filter) : null),
+    [ideas, filter],
+  );
+
   return (
     <div className="page">
       <header className="board-header">
-        <h1>Feedback Board</h1>
+        <h1>Admin · Feedback</h1>
         <div className="header-actions">
-          {user && (
-            <span className="user-chip">{user.fullName ?? user.primaryEmailAddress?.emailAddress}</span>
-          )}
-          <button className="btn-pill btn-primary" onClick={() => setIsAddOpen(true)}>
-            Add idea
-          </button>
-          {isAdmin && (
-            <Link className="btn-pill btn-ghost" to="/admin">
-              Admin
-            </Link>
-          )}
-          <button className="btn-pill btn-ghost" onClick={() => signOut()}>
-            Sign out
-          </button>
+          <Link className="btn-pill btn-ghost" to="/">
+            Back to board
+          </Link>
         </div>
       </header>
+
+      <div className="pill-tabs">
+        {FILTERS.map(({ key, label }) => (
+          <button
+            key={key}
+            className={`btn-pill tab${filter === key ? ' tab--active' : ''}`}
+            onClick={() => setFilter(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       {ideas === null && (
         <ul className="idea-list">
@@ -73,25 +76,23 @@ export default function Board() {
         </ul>
       )}
 
-      {ideas !== null && ideas.length === 0 && <p className="empty-state">No ideas yet…</p>}
+      {visibleIdeas !== null && visibleIdeas.length === 0 && (
+        <p className="empty-state">No feedback here yet…</p>
+      )}
 
-      {ideas !== null && ideas.length > 0 && (
+      {visibleIdeas !== null && visibleIdeas.length > 0 && (
         <ul className="idea-list">
-          {ideas.map((idea) => (
+          {visibleIdeas.map((idea) => (
             <IdeaCard
               key={idea.id}
               idea={idea}
-              isAdmin={isAdmin}
+              isAdmin
               onVoted={handleVoted}
               onMarkedDone={handleMarkedDone}
               onError={pushToast}
             />
           ))}
         </ul>
-      )}
-
-      {isAddOpen && (
-        <AddIdeaModal onClose={() => setIsAddOpen(false)} onCreated={handleCreated} onError={pushToast} />
       )}
 
       <ToastList toasts={toasts} />
