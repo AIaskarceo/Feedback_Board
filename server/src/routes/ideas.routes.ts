@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { ApiResponse, Idea } from '@feedback-board/shared';
 import { createIdea, listIdeas } from '../repositories/ideas.repository';
 import { requireAuth } from '../middleware/requireAuth';
+import { sendNewIdeaEmail } from '../services/email';
 
 export const ideasRouter = Router();
 
@@ -32,6 +33,13 @@ ideasRouter.post('/', async (req, res, next) => {
     }
 
     const idea = await createIdea(text, req.user!.id);
+
+    try {
+      await sendNewIdeaEmail(idea, req.user!);
+    } catch (emailErr) {
+      console.error('Failed to send new-idea email:', emailErr);
+    }
+
     res.status(201).json({ data: idea } satisfies ApiResponse<Idea>);
   } catch (err) {
     next(err);
