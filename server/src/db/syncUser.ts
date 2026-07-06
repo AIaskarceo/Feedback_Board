@@ -1,6 +1,5 @@
 import type { User } from '@feedback-board/shared';
 import { query } from './client';
-import { getAdminEmails } from '../config/adminEmails';
 
 interface ClerkIdentity {
   clerkId: string;
@@ -26,7 +25,12 @@ function toUser(row: UserRow): User {
   };
 }
 
-const DEFAULT_ADMIN_EMAILS = new Set(getAdminEmails().map((email) => email.toLowerCase()));
+const DEFAULT_ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean)
+);
 
 // Upserts by clerk_id. Role is set once on first insert — 'admin' if the
 // email is in ADMIN_EMAILS (a config-driven default-admin allowlist),

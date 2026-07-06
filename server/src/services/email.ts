@@ -1,6 +1,5 @@
 import { Resend } from 'resend';
 import type { Idea, User } from '@feedback-board/shared';
-import { getAdminEmails } from '../config/adminEmails';
 
 const FROM_EMAIL = process.env.EMAIL_FROM ?? 'Feedback Board <onboarding@resend.dev>';
 
@@ -21,24 +20,6 @@ export async function sendIdeaDoneEmail(idea: Idea, submitter: User): Promise<vo
 
   // The Resend SDK resolves (doesn't reject) on API errors, so without this
   // check a failed send looks identical to a successful one to the caller.
-  if (error) {
-    throw new Error(`Resend API error: ${error.message}`);
-  }
-}
-
-export async function sendNewIdeaEmail(idea: Idea, submitter: User): Promise<void> {
-  const adminEmails = getAdminEmails();
-  if (adminEmails.length === 0) {
-    return;
-  }
-
-  const { error } = await getResendClient().emails.send({
-    from: FROM_EMAIL,
-    to: adminEmails,
-    subject: 'New feedback submitted',
-    text: `${submitter.name} (${submitter.email}) submitted new feedback:\n\n"${idea.text}"`,
-  });
-
   if (error) {
     throw new Error(`Resend API error: ${error.message}`);
   }
