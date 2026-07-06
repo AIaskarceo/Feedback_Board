@@ -11,22 +11,36 @@ async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  const token = await getToken();
+  let response: Response;
+  try {
+    const token = await getToken();
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+    });
+  } catch {
+    // Network failure (server unreachable, offline, etc.) — fetch rejects
+    // instead of resolving with an error response. Callers only ever check
+    // response.data/response.error, so surface it the same way instead of
+    // throwing, which would otherwise leave callers stuck mid-request (e.g.
+    // a submit button's loading state never clearing).
+    return { error: 'Could not reach the server. Please check your connection and try again.' };
+  }
 
   if (response.status === 401 && window.location.pathname !== '/sign-in') {
     window.location.assign('/sign-in');
   }
 
-  return (await response.json()) as ApiResponse<T>;
+  try {
+    return (await response.json()) as ApiResponse<T>;
+  } catch {
+    return { error: 'Received an unexpected response from the server.' };
+  }
 }
 
 // The only place the frontend talks to the backend. Endpoints mirror

@@ -44,7 +44,8 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
     req.user = await syncUser({ clerkId, email, name });
     next();
-  } catch {
+  } catch (err) {
+    console.error('requireAuth failed:', err);
     res.status(401).json({ error: 'Unauthorized.' });
   }
 }
