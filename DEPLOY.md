@@ -23,8 +23,9 @@ Environment variables (see [`server/.env.example`](server/.env.example)):
 | -------------------------- | --------------------------------------------------- |
 | `DATABASE_URL`             | `${{Postgres.DATABASE_URL}}`                        |
 | `CLERK_SECRET_KEY`         | from your Clerk dashboard                           |
-| `RESEND_API_KEY`           | from your Resend dashboard                          |
-| `EMAIL_FROM`               | e.g. `Feedback Board <onboarding@resend.dev>`       |
+| `GMAIL_USER`               | Gmail address used to send notification emails      |
+| `GMAIL_APP_PASSWORD`       | Gmail App Password (not your login password)        |
+| `EMAIL_FROM`               | e.g. `Feedback Board <your-address@gmail.com>`      |
 | `APP_ORIGIN`               | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}`            |
 | `ADMIN_EMAILS`             | comma-separated emails to auto-promote to admin on first sign-in |
 

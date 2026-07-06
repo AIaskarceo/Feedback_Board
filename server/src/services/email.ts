@@ -1,26 +1,30 @@
-import { Resend } from 'resend';
+import nodemailer, { type Transporter } from 'nodemailer';
 import type { Idea, User } from '@feedback-board/shared';
 
-const FROM_EMAIL = process.env.EMAIL_FROM ?? 'Feedback Board <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.EMAIL_FROM ?? process.env.GMAIL_USER ?? 'Feedback Board';
 
-let resend: Resend | undefined;
+let transporter: Transporter | undefined;
 
-function getResendClient(): Resend {
-  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
-  return resend;
+function getTransporter(): Transporter {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
+      port: Number(process.env.SMTP_PORT ?? 465),
+      secure: true,
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  }
+  return transporter;
 }
 
 export async function sendIdeaDoneEmail(idea: Idea, submitter: User): Promise<void> {
-  const { error } = await getResendClient().emails.send({
+  await getTransporter().sendMail({
     from: FROM_EMAIL,
     to: submitter.email,
     subject: 'Your idea was marked as Done! 🎉',
     text: `Hi ${submitter.name},\n\nYour idea has been marked as done:\n\n"${idea.text}"\n\nThanks for contributing!`,
   });
-
-  // The Resend SDK resolves (doesn't reject) on API errors, so without this
-  // check a failed send looks identical to a successful one to the caller.
-  if (error) {
-    throw new Error(`Resend API error: ${error.message}`);
-  }
 }

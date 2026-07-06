@@ -37,11 +37,13 @@ vi.mock('@clerk/backend', () => ({
 }));
 
 const { sendMock } = vi.hoisted(() => ({
-  sendMock: vi.fn(async () => ({ data: { id: 'email_test' }, error: null })),
+  sendMock: vi.fn(async () => ({ messageId: 'email_test' })),
 }));
 
-vi.mock('resend', () => ({
-  Resend: vi.fn().mockImplementation(() => ({ emails: { send: sendMock } })),
+vi.mock('nodemailer', () => ({
+  default: {
+    createTransport: vi.fn(() => ({ sendMail: sendMock })),
+  },
 }));
 
 import { buildTestApp } from './testApp';
