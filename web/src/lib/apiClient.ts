@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import type { ApiResponse, Idea, User } from '@feedback-board/shared';
 
@@ -55,7 +55,16 @@ export type ApiClient = ReturnType<typeof createApiClient>;
 
 // Components and pages use this hook instead of importing fetch directly,
 // so the Clerk session token is always attached.
+//
+// The returned client is created once and never changes identity, even
+// though Clerk's getToken isn't guaranteed to be referentially stable across
+// renders — closing over a ref (kept fresh every render) means callers can
+// safely put apiClient in a useEffect/useCallback dependency array without
+// risking an infinite re-render loop.
 export function useApiClient(): ApiClient {
   const { getToken } = useAuth();
-  return useMemo(() => createApiClient(() => getToken()), [getToken]);
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
+
+  return useMemo(() => createApiClient(() => getTokenRef.current()), []);
 }
