@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   title: string;
@@ -7,7 +8,7 @@ interface ModalProps {
 }
 
 export default function Modal({ title, children, onClose }: ModalProps) {
-  return (
+  return createPortal(
     <div className="modal-overlay" role="presentation" onClick={onClose}>
       <div
         className="modal card"
@@ -19,6 +20,7 @@ export default function Modal({ title, children, onClose }: ModalProps) {
         <h2 className="modal-title">{title}</h2>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
