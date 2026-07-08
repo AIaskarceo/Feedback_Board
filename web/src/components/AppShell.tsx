@@ -25,20 +25,8 @@ function MoonIcon() {
   );
 }
 
-// Folded origami "delta" mark approximating the trinos logo (three facets for
-// the 3D fold). Swap this for an <img src="/trinos-logo.svg"> if the real
-// asset is dropped into web/public/.
 function TrinosLogo() {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
-      {/* left face — medium steel blue */}
-      <path d="M16 3 L4 27 L16 21 Z" fill="#4a7fb5" />
-      {/* right face — pale blue */}
-      <path d="M16 3 L16 21 L28 27 Z" fill="#a9c9e6" />
-      {/* bottom fold — darker, creates the origami depth */}
-      <path d="M4 27 L16 21 L28 27 L16 24 Z" fill="#2e5c8a" />
-    </svg>
-  );
+  return <img src="/trinos-logo.png" alt="Trinos" className="sidebar__logo-img" />;
 }
 
 const ROLE_LABELS: Record<string, string> = {
