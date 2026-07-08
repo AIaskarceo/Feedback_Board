@@ -230,9 +230,9 @@ entrypoint check if `server.ts` needs to become importable elsewhere.
 
 ## Deploy
 
-See [`DEPLOY.md`](DEPLOY.md). Three Railway services: `api` (`railway.api.json`),
-`web` (`railway.web.json`), and a managed Postgres plugin. The `api` service
-runs migrations on every boot before starting (idempotent).
+See [`DEPLOY.md`](DEPLOY.md). `web` deploys to Vercel, `api` deploys to Render,
+and Postgres is a managed Neon database. The `api` service runs migrations on
+every boot before starting (idempotent).
 
 ## Auth & env
 
