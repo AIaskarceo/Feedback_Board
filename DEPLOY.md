@@ -26,8 +26,11 @@ Environment variables (see [`server/.env.example`](server/.env.example)):
 | `GMAIL_USER`               | Gmail address used to send notification emails      |
 | `GMAIL_APP_PASSWORD`       | Gmail App Password (not your login password)        |
 | `EMAIL_FROM`               | e.g. `Feedback Board <your-address@gmail.com>`      |
-| `APP_ORIGIN`               | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}`            |
 | `ADMIN_EMAILS`             | comma-separated emails to auto-promote to admin on first sign-in |
+
+`APP_ORIGIN` is no longer used — CORS is open to any origin (`server/src/server.ts`),
+since auth is a Bearer token, not a cookie, so there's no CSRF exposure from
+allowing cross-origin callers.
 
 `PORT` is injected by Railway automatically; `server/src/server.ts` already
 reads it.

@@ -7,7 +7,7 @@ import { registerRoutes } from '../src/routes';
 export function buildTestApp(): Express {
   const app = express();
   app.use(cors());
-  app.use(express.json());
+  app.use(express.json({ limit: '12mb' }));
   registerRoutes(app);
   return app;
 }
